@@ -3,9 +3,6 @@
 
 #include "Disc.hpp"
 #include <stack>
-#include <iterator>
-
-using std::iterator;
 using std::stack;
 
 class Pin{

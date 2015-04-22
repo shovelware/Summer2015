@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5A0A21F4-0C4C-4969-841E-87814F107FAB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>_73___Towers_Of_Hanoi</RootNamespace>
+    <RootNamespace>_73___Tower_Of_Hanoi</RootNamespace>
     <ProjectName>73 - Tower Of Hanoi</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

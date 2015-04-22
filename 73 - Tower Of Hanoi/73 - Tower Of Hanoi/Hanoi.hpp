@@ -30,6 +30,7 @@ public:
 
 	//Game Functions
 	void reset();
+	unsigned int minimumMoves();
 	bool move(unsigned int const& from, unsigned int const& dest);
 	void updateGameState();
 };

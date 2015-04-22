@@ -30,9 +30,6 @@ const sf::Mouse g_mouse;
 const sf::Keyboard g_keyboard;
 
 bool GUI = false;
-
-
-
 ////////////////////////////////////////////////////////////
 ///Functions
 //////////////////////////////////////////////////////////// 
@@ -43,9 +40,15 @@ bool GUI = false;
 int main()
 {
 
-	Hanoi game(3, 3, 0, 2);
-	game.move(1, 2);
+	Hanoi game(2, 3, 0, 3);
+
+	int foo = game.minimumMoves();
+
+	game.move(0, 2);
 	game.move(0, 1);
+	game.move(2, 1);
+
+	bool bar = game.getSolved();
 
 	// Create the main window 
 	sf::RenderWindow window(sf::VideoMode(g_screenW, g_screenH, 32), "Tower Of Hanoi");

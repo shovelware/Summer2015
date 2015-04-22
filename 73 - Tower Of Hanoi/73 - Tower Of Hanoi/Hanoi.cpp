@@ -54,6 +54,11 @@ void Hanoi::reset()
 	m_solved = false;
 }
 
+unsigned int Hanoi::minimumMoves()
+{
+	return pow(2, m_discNum) - 1;
+}
+
 //attempts to move between two pin indices, returns success
 bool Hanoi::move(unsigned int const& from, unsigned int const& dest)
 {
@@ -85,7 +90,7 @@ void Hanoi::updateGameState()
 	if (m_pins[m_startPin].empty())
 	{
 		//if an end pin is specified
-		if (m_endPin <= m_pinNum)
+		if (m_endPin < m_pinNum)
 		{
 			if (m_pins[m_endPin - 1].full())
 				m_solved = true;

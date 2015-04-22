@@ -1,7 +1,8 @@
 #ifndef GAMECLOCK_H
 #define GAMECLOCK_H
 
-//Game clock that ticks appropriately and is not responsible for updates taking effect. It knows when they should and presumes they do, independent of game systems.
+//Game clock that ticks appropriately and is not responsible for updates.
+//It knows when they should and presumes they do, independent of game systems.
 
 //long types are milliseconds
 typedef long milli;
