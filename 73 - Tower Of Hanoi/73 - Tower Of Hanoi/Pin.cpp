@@ -1,11 +1,10 @@
 #include "Pin.hpp"
 
 #pragma region Ctor
-Pin::Pin() : m_height(6){}
-Pin::Pin(unsigned int height) : m_height(height) {}
+Pin::Pin(unsigned int const& height) : m_height(height) {}
 #pragma endregion
 
-#pragma region Accessors (Basic)
+#pragma region Accessors
 //returns stack empty state
 bool Pin::empty() const
 {
@@ -29,41 +28,34 @@ int Pin::capacity() const
 {
 	return m_height;
 }
-#pragma endregion
 
-#pragma region Accessors (Basic)
-
-//Returns a pointer to the top disc, or null if none available
-const Disc* Pin::getTop() const
+//Returns a copy of the top disc, or max if pin is empty
+Disc Pin::top() const
 {
-	if (m_stack.size() > 0)
-	{
-		//Const ptr for returning
-		const Disc* retPtr = &(m_stack.top());
-		return retPtr;
-	}
+	if (m_stack.size() <= 0)
+		return Disc(UINT_MAX);
 
-	else return nullptr;
+	else return Disc(m_stack.top());
 }
 
-//returns a copy of the stack for drawing purposes
+//returns a copy of the stack
 stack<Disc> Pin::getStack() const
 {
 	return stack<Disc>(m_stack);
 }
-
 #pragma endregion
 
 #pragma region Container Operations
-
-//attempts to push to stack
+//attempts to push to stack, returns success
 bool Pin::push(Disc d)
 {
-	if (m_stack.size() >= m_height)
+	//if we're full or bad disc, no go
+	if (m_stack.size() >= m_height || d == 0)
 	{
 		return false;
 	}
 
+	//otherwise go
 	else
 	{
 		m_stack.push(d);
@@ -71,6 +63,7 @@ bool Pin::push(Disc d)
 	}
 }
 
+//returns top disc popped from stack
 Disc Pin::pop()
 {
 	if (m_stack.size() > 0)

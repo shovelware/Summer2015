@@ -13,21 +13,19 @@ private:
 	stack<Disc> m_stack;
 	unsigned int m_height;
 public:
-	Pin();
-	Pin(unsigned int height);
+	Pin(unsigned int const& height);
 
+	//Accessors
 	bool empty() const;
 	bool full() const;
 	int size() const;
 	int capacity() const;
+	Disc top() const;
+	stack<Disc> getStack() const;
 
-	const Disc* getTop() const;//
-	stack<Disc> getStack() const;//
-
-
+	//Container operations
 	bool push(Disc d);
 	Disc pop();
-	bool clear();
 };
 
 #endif

@@ -9,7 +9,7 @@ GameClock::GameClock()
 }
 
 //Game clock with variable tick time
-GameClock::GameClock(milli tickTime) : m_tickTime(tickTime)
+GameClock::GameClock(milli const& tickTime) : m_tickTime(tickTime)
 {
 	start();
 }

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "73 - Towers Of Hanoi", "73 - Towers Of Hanoi\73 - Towers Of Hanoi.vcxproj", "{5A0A21F4-0C4C-4969-841E-87814F107FAB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "73 - Tower Of Hanoi", "73 - Tower Of Hanoi\73 - Tower Of Hanoi.vcxproj", "{5A0A21F4-0C4C-4969-841E-87814F107FAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

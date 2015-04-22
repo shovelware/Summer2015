@@ -18,23 +18,20 @@ using std::vector;
 
 class Hanoi{
 private:
-	unsigned int m_pinNum, m_pinHeight;
+	unsigned int m_pinNum, m_discNum, m_startPin, m_endPin;
+	bool m_solved;
 	vector<Pin> m_pins;
-	GameClock m_clock;
-
 public:
-	Hanoi();
-	Hanoi(unsigned int const &numPins, unsigned int const &pinHeight);
+	Hanoi(unsigned int const& discNum, unsigned int const& pinNum, unsigned int const& startPin, unsigned int const& endPin);
 
-	void draw();
-	bool move(int from, int dest);
+	//Accessors
+	unsigned int getNumPins() const;
+	bool getSolved() const;
 
-	void getNumPins();
-
+	//Game Functions
 	void reset();
+	bool move(unsigned int const& from, unsigned int const& dest);
 	void updateGameState();
-	unsigned int randomPin();
-
 };
 
 #endif

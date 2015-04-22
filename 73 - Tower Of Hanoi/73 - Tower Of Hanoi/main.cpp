@@ -24,14 +24,12 @@
 ////////////////////////////////////////////////////////////
 ///Global Variables
 //////////////////////////////////////////////////////////// 
-const int screenW = 400;
-const int screenH = 400;
+const int g_screenW = 400;
+const int g_screenH = 400;
 const sf::Mouse g_mouse;
 const sf::Keyboard g_keyboard;
 
 bool GUI = false;
-
-Hanoi game;
 
 
 
@@ -44,8 +42,13 @@ Hanoi game;
 //////////////////////////////////////////////////////////// 
 int main()
 {
+
+	Hanoi game(3, 3, 0, 2);
+	game.move(1, 2);
+	game.move(0, 1);
+
 	// Create the main window 
-	sf::RenderWindow window(sf::VideoMode(screenW, screenH, 32), "Towers Of Hanoi");
+	sf::RenderWindow window(sf::VideoMode(g_screenW, g_screenH, 32), "Tower Of Hanoi");
 
 	// Start game loop 
 	while (window.isOpen())

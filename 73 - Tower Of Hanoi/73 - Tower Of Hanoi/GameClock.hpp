@@ -11,19 +11,22 @@ private:
 	milli m_tickTime, m_curTime, m_prvTime, m_startTime, m_accum;
 	long m_tickCount;
 
+	//Clock functions
 	void start();
 	void tick();
 public:
 	GameClock();
-	GameClock(milli tickTime);
+	GameClock(milli const& tickTime);
 
-	void update();
-
+	//Accessors
 	milli timeSinceLastUpdate() const;
 	milli timeSinceStarted() const;
 	milli timeNow() const;
 	long getTickCount() const;
 	long GameClock::getTicksPerSecond() const;
+
+	//Clock functions
+	void update();
 };
 
 #endif
