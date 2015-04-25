@@ -7,8 +7,10 @@ using std::stack;
 
 class Pin{
 private:
+	Pin();
 	stack<Disc> m_stack;
 	unsigned int m_height;
+
 public:
 	Pin(unsigned int const& height);
 
@@ -23,6 +25,8 @@ public:
 	//Container operations
 	bool push(Disc d);
 	Disc pop();
+	void resize(unsigned int const& height);
+	void clear();
 };
 
 #endif

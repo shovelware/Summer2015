@@ -15,6 +15,7 @@ private:
 	//Clock functions
 	void start();
 	void tick();
+
 public:
 	GameClock();
 	GameClock(milli const& tickTime);

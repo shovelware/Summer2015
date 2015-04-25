@@ -79,4 +79,15 @@ Disc Pin::pop()
 	}
 }
 
+//Changes the height value of pin 
+void Pin::resize(unsigned int const& height)
+{
+	m_height = height > 0 ? height : m_height;
+}
+
+void Pin::clear()
+{
+	m_stack = stack<Disc>();
+}
+
 #pragma endregion

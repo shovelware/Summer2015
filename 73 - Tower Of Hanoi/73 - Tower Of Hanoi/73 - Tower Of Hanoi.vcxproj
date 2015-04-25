@@ -87,6 +87,7 @@
   <ItemGroup>
     <ClCompile Include="Disc.cpp" />
     <ClCompile Include="GameClock.cpp" />
+    <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Hanoi.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pin.cpp" />
@@ -94,6 +95,7 @@
   <ItemGroup>
     <ClInclude Include="GameClock.hpp" />
     <ClInclude Include="Disc.hpp" />
+    <ClInclude Include="GUI.hpp" />
     <ClInclude Include="Pin.hpp" />
     <ClInclude Include="Hanoi.hpp" />
   </ItemGroup>

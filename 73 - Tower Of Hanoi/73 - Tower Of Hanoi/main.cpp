@@ -20,16 +20,16 @@
 #include <SFML/Graphics.hpp>
 
 #include "Hanoi.hpp"
+#include "GUI.hpp"
 
 ////////////////////////////////////////////////////////////
 ///Global Variables
 //////////////////////////////////////////////////////////// 
-const int g_screenW = 400;
-const int g_screenH = 400;
-const sf::Mouse g_mouse;
+const int g_screenW = 1920;
+const int g_screenH = 600;
+const  sf::Mouse g_mouse;
 const sf::Keyboard g_keyboard;
 
-bool GUI = false;
 ////////////////////////////////////////////////////////////
 ///Functions
 //////////////////////////////////////////////////////////// 
@@ -39,14 +39,21 @@ bool GUI = false;
 //////////////////////////////////////////////////////////// 
 int main()
 {
+	Hanoi game;
+	GUI gui;
+	gui.colpls();
 
-	Hanoi game(2, 3, 0, 3);
+	gui.setScale(32);
 
 	int foo = game.minimumMoves();
+	game.setNumPins(3);
+	game.lockParameter();
+	game.setNumDiscs(3);
+	game.lockParameter();
 
-	game.move(0, 2);
-	game.move(0, 1);
-	game.move(2, 1);
+	//game.move(1, 2);
+	//game.move(1, 0);
+	//game.move(2, 0);
 
 	bool bar = game.getSolved();
 
@@ -74,6 +81,8 @@ int main()
 
 		// Draw loop
 		window.clear();
+
+		gui.drawGame(window, game);
 
 		window.display();
 

@@ -3,7 +3,9 @@
 
 class Disc{
 private:
+	Disc();
 	unsigned int m_size;
+
 public:
 	Disc(unsigned int const& size);
 
