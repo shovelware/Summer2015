@@ -33,7 +33,7 @@ typedef map<buttonsName_t, InputAction> InputMap;
 ///Global Variables
 //////////////////////////////////////////////////////////// 
 const int g_screenW = 800;
-const int g_screenH = 600;
+const int g_screenH = 800;
 
 const sf::Mouse g_mouse;
 const sf::Keyboard g_keyboard;
