@@ -75,9 +75,9 @@ private:
 	void calcOutline();
 	UIntRect calcBase(unsigned int winHeight, unsigned int pinNum, unsigned int pinHeight);
 	UIntRect calcPin(unsigned int winHeight, unsigned int pinNum, unsigned int pinHeight, unsigned int pinIndex);
-	RectangleShape& updateRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, Color &const c, rectType_t rectType, rectDrawOn_t drawOn);
-	RectangleShape& updateRect(UIntRect rect, Color &const c, rectType_t rectType, rectDrawOn_t drawOn);
-	RectangleShape& processRect(Color &const c, rectType_t rectType, rectDrawOn_t drawOn);
+	RectangleShape& updateRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, Color c, rectType_t rectType, rectDrawOn_t drawOn);
+	RectangleShape& updateRect(UIntRect rect, Color  c, rectType_t rectType, rectDrawOn_t drawOn);
+	RectangleShape& processRect(Color c, rectType_t rectType, rectDrawOn_t drawOn);
 
 
 
@@ -98,7 +98,7 @@ public:
 	void setDisc(bool disc);
 
 	//Drawing functions
-	void drawGame(sf::RenderWindow& const w, Hanoi const& g);
-	void drawGUI(sf::RenderWindow& const w, Hanoi const& game);
+	void drawGame(sf::RenderWindow& w, Hanoi const& g);
+	void drawGUI(sf::RenderWindow& w, Hanoi const& game);
 };
 #endif

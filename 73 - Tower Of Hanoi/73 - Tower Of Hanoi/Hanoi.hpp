@@ -16,11 +16,14 @@ using std::vector;
 
 class Hanoi{
 private:
+	//Game variables
 	const unsigned int m_minPins = 3, m_minDiscs = 2;
-	unsigned int m_pinNum, m_discNum, m_startPin, m_endPin, m_moves;
+	unsigned int 
+		m_pinNum, m_discNum, 
+		m_startPin, m_endPin,
+		m_pinSelected, m_discHeld, 
+		m_moves;
 	vector<Pin> m_pins;
-	unsigned int m_pinSelected;
-	unsigned int m_discHeld;
 
 	//Game Functions
 	void checkGameState();
@@ -42,17 +45,14 @@ private:
 public:
 	Hanoi();
 
-	//direction for movement
-	enum direction_t { LEFT, UP, RIGHT, DOWN };
-
 	//Accessors
-	bool getPlaying() const;
-	bool getSolved() const;
+	unsigned int getGameState() const;
+	char* getGameStateAsString() const;
+	unsigned int getMinimumMoves() const;
+	unsigned int getMoves() const;
 	unsigned int getPinNum() const;
 	unsigned int getPinHeight() const;
 	vector<Pin> getPins() const;
-	char* getGameStateAsString() const;
-	unsigned int getGameState() const;
 	unsigned int getPinSelected() const;
 	unsigned int getDiscHeld() const;
 	int getLastInput() const;
@@ -60,7 +60,6 @@ public:
 	//Game Functions
 	bool reset();
 	void updateParameters();
-	unsigned int minimumMoves();
 
 	bool moveLeft();
 	bool moveRight();

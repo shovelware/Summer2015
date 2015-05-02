@@ -74,15 +74,21 @@ UIntRect GUI::calcBase(unsigned int winHeight, unsigned int pinNum, unsigned int
 UIntRect GUI::calcPin(unsigned int winHeight, unsigned int pinNum, unsigned int pinHeight, unsigned int pinIndex)
 {
 	return UIntRect(
-		(2 * m_scale) + (pinHeight * m_scale) + (pinIndex * ((2 * m_scale) + (2 * pinHeight * m_scale))),
+		m_scale + (pinHeight * m_scale) + (pinIndex * ((2 * m_scale) + (2 * pinHeight * m_scale))),
 		winHeight - (2 * m_scale) - pinHeight * m_scale,
 		m_scale,
 		pinHeight * m_scale
 		);
+
+	//(1u x border) + (width of discs on left) + (index * (width of discs on right, gap, width of discs on left))
+	//base y - pin height
+	//1u width
+	//pinHeight height
+	//pin colour
 }
 
 //updates parameters of drawing rectangle, also handles special rules
-RectangleShape& GUI::updateRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, Color &const c, rectType_t rectType = GUI::rectType_t::DEFAULT, rectDrawOn_t drawOn = GUI::rectDrawOn_t::ALWAYS)
+RectangleShape& GUI::updateRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, Color c, rectType_t rectType = GUI::rectType_t::DEFAULT, rectDrawOn_t drawOn = GUI::rectDrawOn_t::ALWAYS)
 {
 	//Update xywh
 	m_drawRect.setPosition(sf::Vector2f(x, y));
@@ -160,7 +166,7 @@ RectangleShape& GUI::updateRect(unsigned int x, unsigned int y, unsigned int w, 
 
 //PUBLIC
 
-void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
+void GUI::drawGame(sf::RenderWindow& w, Hanoi const& g)
 {
 	//update mouse Position and click prior to draw
 	//m_mousePos = sf::Mouse::getPosition(w);
@@ -205,17 +211,13 @@ void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
 			rectBase.h,
 			m_cbase
 			));
-
-		//base colour
-		//rect type
-		//draw condition
 	}//end base draw toggle
 
 	//rectBase = m_drawRect.getGlobalBounds();
 	//Pins
 	vector<Pin> pins = g.getPins();
 
-	for (int p = 0; p < pinNum; ++p)
+	for (unsigned int p = 0; p < pinNum; ++p)
 	{
 		rectPin = calcPin(winH, pinNum, pinHeight, p);
 
@@ -230,15 +232,6 @@ void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
 				m_cpin,
 				(p == pinSelected ? SELECT : DEFAULT )
 				));
-
-			//(1u x border + 1u base border) + (width of discs on left) + (index * (width of discs on right, gap, width of discs on left))
-			//base y - pin height
-			//1u width
-			//pinHeight height
-			//pin colour
-			//rect type
-			//draw condition
-
 		}//end pin draw toggle
 
 		//Discs on Pin
@@ -341,10 +334,20 @@ void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
 			<< " | Disc: "
 			<< discHeld
 			<< endl;
+
+		if (g.getGameState() == 3)
+		{
+			cout
+				<< ""
+				<< g.getMoves()
+				<< " | "
+				<< g.getMinimumMoves()
+				<< endl;
+		}
 	}
 }
 
-void GUI::drawGUI(sf::RenderWindow& const w, Hanoi const& g)
+void GUI::drawGUI(sf::RenderWindow& w, Hanoi const& g)
 {
 
 }

@@ -92,14 +92,7 @@ int main()
 	gui.m_debug = true;
 
 	bool updateGUI = true;
-	//game.actionButton();
-	//game.moveUp();
-	//game.moveUp();
-	//game.moveUp();
-	//game.actionButton();
 
-	int minMoves = game.minimumMoves();
-	bool solvedState = game.getSolved();
 
 	registerInputs();
 

@@ -9,16 +9,6 @@ Hanoi::Hanoi() : m_gamestate(PIN), m_pinNum(m_minPins), m_discNum(m_minDiscs), m
 #pragma endregion
 
 #pragma region Accessors
-bool Hanoi::getPlaying() const { return (m_gamestate == PLAYING); }
-
-bool Hanoi::getSolved() const {	return (m_gamestate == SOLVED); }
-
-unsigned int Hanoi::getPinNum() const { return m_pinNum; }
-
-unsigned int Hanoi::getPinHeight() const { return m_pins[0].capacity();  }
-
-vector<Pin> Hanoi::getPins() const { return vector<Pin>(m_pins); }
-
 unsigned int Hanoi::getGameState() const { return m_gamestate; }
 
 char* Hanoi::getGameStateAsString() const
@@ -37,6 +27,17 @@ char* Hanoi::getGameStateAsString() const
 		return "ERROR";
 	}
 }
+
+//Minimum number of moves is (2^n) - 1 where n is number of discs
+unsigned int Hanoi::getMinimumMoves() const { return pow(2, m_discNum) - 1; }
+
+unsigned int Hanoi::getMoves() const { return m_moves; }
+
+unsigned int Hanoi::getPinNum() const { return m_pinNum; }
+
+unsigned int Hanoi::getPinHeight() const { return m_pins[0].capacity();  }
+
+vector<Pin> Hanoi::getPins() const { return vector<Pin>(m_pins); }
 
 unsigned int Hanoi::getPinSelected() const { return m_pinSelected; }
 
@@ -111,12 +112,6 @@ void Hanoi::updateParameters()
 			m_pins[m_startPin].push(Disc(d));
 		}
 	}
-}
-
-//Minimum number of moves is (2^n) - 1 where n is number of disks
-unsigned int Hanoi::minimumMoves()
-{
-	return pow(2, m_discNum) - 1;
 }
 
 //Movement method, returns GUI update necessity
