@@ -94,11 +94,12 @@ RectangleShape& GUI::updateRect(unsigned int x, unsigned int y, unsigned int w, 
 	m_drawRect.setPosition(sf::Vector2f(x, y));
 	m_drawRect.setSize(sf::Vector2f(w, h));
 
+
 	bool process = false;
 
 	//Default rects just get drawn
-		m_drawRect.setFillColor(c);
-		m_drawRect.setOutlineThickness(0);
+	m_drawRect.setFillColor(c);
+	m_drawRect.setOutlineThickness(0);
 
 	if (rectType == DEFAULT);
 
@@ -144,7 +145,7 @@ RectangleShape& GUI::updateRect(unsigned int x, unsigned int y, unsigned int w, 
 		if (rectType == HIGHLIGHT)
 		{
 			m_drawRect.setFillColor(c);
-			m_drawRect.setOutlineColor(m_chover);			
+			m_drawRect.setOutlineColor(m_chover);
 			m_drawRect.setOutlineThickness(-m_outline);
 		}
 

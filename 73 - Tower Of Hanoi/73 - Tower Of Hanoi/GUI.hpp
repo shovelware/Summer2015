@@ -18,7 +18,7 @@ using std::endl;
 struct UIntRect{
 	unsigned int m_x, m_y, m_w, m_h;
 public:
-	unsigned int const& x = m_x, const& y = m_y, const& w = m_w, const& h = m_h;
+	unsigned int const& x = m_x, y = m_y, w = m_w, h = m_h;
 	UIntRect() : m_x(0), m_y(0), m_w(0), m_h(0) {}
 	UIntRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h) : m_x(x), m_y(y), m_w(w), m_h(h) {}
 	UIntRect(UIntRect const& that) : m_x(that.x), m_y(that.y), m_w(that.w), m_h(that.h) {}
@@ -76,8 +76,6 @@ private:
 	UIntRect calcBase(unsigned int winHeight, unsigned int pinNum, unsigned int pinHeight);
 	UIntRect calcPin(unsigned int winHeight, unsigned int pinNum, unsigned int pinHeight, unsigned int pinIndex);
 	RectangleShape& updateRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, Color c, rectType_t rectType, rectDrawOn_t drawOn);
-	RectangleShape& updateRect(UIntRect rect, Color  c, rectType_t rectType, rectDrawOn_t drawOn);
-	RectangleShape& processRect(Color c, rectType_t rectType, rectDrawOn_t drawOn);
 
 
 

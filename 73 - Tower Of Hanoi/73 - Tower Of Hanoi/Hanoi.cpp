@@ -71,7 +71,7 @@ void Hanoi::updateParameters()
 			m_pins.clear();
 			m_pins.reserve(m_pinNum);
 
-			for (int p = 0; p < m_pinNum; ++p)
+			for (unsigned int p = 0; p < m_pinNum; ++p)
 			{
 				m_pins.push_back(Pin(m_discNum));
 			}
@@ -86,7 +86,7 @@ void Hanoi::updateParameters()
 	else if (m_gamestate == DISC)
 	{
 		//clear all pins
-		for (int p = 0; p < m_pinNum; ++p)
+		for (unsigned int p = 0; p < m_pinNum; ++p)
 		{
 			m_pins[p].clear();
 		}
@@ -101,7 +101,7 @@ void Hanoi::updateParameters()
 		//Make sure pins are correct height for game
 		if (m_pins[m_startPin].size() != m_discNum)
 		{
-			for (int p = 0; p < m_pinNum; ++p)
+			for (unsigned int p = 0; p < m_pinNum; ++p)
 			{
 				m_pins[p].resize(m_discNum);
 			}
@@ -265,6 +265,8 @@ bool Hanoi::returnDisc()
 		m_discHeld = m_pinNum;
 		return true;
 	}
+
+	return false;
 }
 
 //Used for one-button interaction with game, returns GUI update necessity
@@ -408,26 +410,25 @@ bool Hanoi::setNumPins(unsigned int numPins)
 			return true;
 		}
 		
-		//exit on invalid
-		else return false;
 	}
+
+	return false;
 }
 
 bool Hanoi::setNumDiscs(unsigned int numDiscs)
 {
 	//disc phase only
 	if (m_gamestate == DISC)
-	{		//valid number
+	{	
+		//valid number
 		if (numDiscs >= m_minPins)
 		{
 			m_discNum = numDiscs;
 			updateParameters();
 			return true;
 		}
-
-		//exit on invalid
-		else return false;
 	}
+	return false;
 }
 
 void Hanoi::setStartPin(unsigned int startPin)
@@ -470,7 +471,7 @@ void Hanoi::checkGameState()
 			unsigned int fullCount = 0;
 
 			//for each pin
-			for (int p = 0; p < m_pinNum; ++p)
+			for (unsigned int p = 0; p < m_pinNum; ++p)
 			{
 				//not start
 				if (p != m_startPin)

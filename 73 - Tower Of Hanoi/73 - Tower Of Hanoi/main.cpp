@@ -50,25 +50,18 @@ void registerInputs()
 {
 	//Left Arrow / A : Move Left
 	buttons[LEFT] = InputAction(Keyboard::Left, Keyboard::A);
-
 	//Right Arrow / D : Move Right
 	buttons[RIGHT] = InputAction(Keyboard::Right, Keyboard::D);
-
 	//Up Arrow / W : Move Up
 	buttons[UP] = InputAction(Keyboard::Up, Keyboard::W);
-
 	//Down Arrow / S : Move Left
 	buttons[DOWN] = InputAction(Keyboard::Down, Keyboard::S);
-
 	//Space : Lock Parameter / Pickup
 	buttons[ACTION] = InputAction(Keyboard::Space);
-
 	//Num Plus : Scale Up
 	buttons[SCALEUP] = InputAction(Keyboard::Add);
-
 	//Num Minus : Scale Down
 	buttons[SCALEDOWN] = InputAction(Keyboard::Subtract);
-
 	//Digits, Numpad : Pins
 	buttons[NUM0] = InputAction(Keyboard::Num0, Keyboard::Numpad0);
 	buttons[NUM1] = InputAction(Keyboard::Num1, Keyboard::Numpad1);
