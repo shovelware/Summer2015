@@ -1,4 +1,4 @@
-#include "GameClock.hpp"
+#include <GameClock.hpp>
 
 #pragma region Ctor
 //Default Ctor: Game clock with 60 ticks per second

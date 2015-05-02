@@ -1,4 +1,4 @@
-#include "Pin.hpp"
+#include <Pin.hpp>
 
 #pragma region Ctor
 Pin::Pin(unsigned int const& height) : m_height(height) {}

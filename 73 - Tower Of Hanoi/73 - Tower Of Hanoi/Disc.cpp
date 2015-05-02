@@ -1,4 +1,4 @@
-#include "Disc.hpp"
+#include <Disc.hpp>
 
 #pragma region Ctor
 Disc::Disc(unsigned int const& size) : m_size(size) {}

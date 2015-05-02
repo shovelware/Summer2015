@@ -1,7 +1,7 @@
 #ifndef PIN_H
 #define PIN_H
 
-#include "Disc.hpp"
+#include <Disc.hpp>
 #include <stack>
 using std::stack;
 

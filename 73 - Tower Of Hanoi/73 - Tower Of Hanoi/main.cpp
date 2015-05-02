@@ -19,43 +19,65 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Hanoi.hpp"
-#include "GUI.hpp"
+#include <Hanoi.hpp>
+#include <GUI.hpp>
+#include <InputAction.hpp>
+
+
+#include <map>
+using std::map;
+enum buttonsName_t { LEFT, RIGHT, UP, DOWN, ACTION};
+typedef map<buttonsName_t, InputAction> InputMap;
 
 ////////////////////////////////////////////////////////////
 ///Global Variables
 //////////////////////////////////////////////////////////// 
-const int g_screenW = 1920;
+const int g_screenW = 800;
 const int g_screenH = 600;
-const  sf::Mouse g_mouse;
+
+const sf::Mouse g_mouse;
 const sf::Keyboard g_keyboard;
+
+Hanoi game;
+GUI gui;
+InputMap buttons;
 
 ////////////////////////////////////////////////////////////
 ///Functions
 //////////////////////////////////////////////////////////// 
+
+void registerInputs()
+{
+	//Left Arrow / A : Move Left
+	buttons[LEFT] = InputAction(Keyboard::Left, Keyboard::A);
+
+	//Right Arrow / D : Move Right
+	buttons[RIGHT] = InputAction(Keyboard::Right, Keyboard::D);
+
+	//Up Arrow / W : Move Up
+	buttons[UP] = InputAction(Keyboard::Up, Keyboard::W);
+
+	//Down Arrow / S : Move Left
+	buttons[DOWN] = InputAction(Keyboard::Down, Keyboard::S);
+
+	//Space : Lock Parameter / Pickup
+	buttons[ACTION] = InputAction(Keyboard::Space);
+}
 
 ////////////////////////////////////////////////////////////
 ///Entrypoint of application 
 //////////////////////////////////////////////////////////// 
 int main()
 {
-	Hanoi game;
-	GUI gui;
-	gui.colpls();
 
-	gui.setScale(32);
+	gui.setScale(16);
+	gui.m_debug = true;
 
-	int foo = game.minimumMoves();
-	game.setNumPins(3);
-	game.lockParameter();
-	game.setNumDiscs(3);
-	game.lockParameter();
+	bool updateGUI = true;
+	int minMoves = game.minimumMoves();
+	bool solvedState = game.getSolved();
 
-	//game.move(1, 2);
-	//game.move(1, 0);
-	//game.move(2, 0);
-
-	bool bar = game.getSolved();
+	registerInputs();
 
 	// Create the main window 
 	sf::RenderWindow window(sf::VideoMode(g_screenW, g_screenH, 32), "Tower Of Hanoi");
@@ -72,19 +94,108 @@ int main()
 				window.close();
 
 			// Escape key : exit 
-			if ((Event.type == sf::Event::KeyPressed) && ((Event.key.code == g_keyboard.Escape) ||(Event.key.code == g_keyboard.BackSpace)/*Alt+F4 support here*/))
+			if ((Event.type == sf::Event::KeyPressed) && ((Event.key.code == g_keyboard.Escape) || (Event.key.code == g_keyboard.BackSpace)/*Alt+F4 support here*/))
 				window.close();
 
 		}
+		
+		#pragma region OLD Input
 
-		//Input
+		if (false)
+		{
+			static bool
+				ik_left, ik_right, ik_up, ik_down, ik_action;
+
+			//Left Arrow / A : Move Left
+			if (g_keyboard.isKeyPressed(g_keyboard.Left) || g_keyboard.isKeyPressed(g_keyboard.A))
+			{
+				if (!ik_left)
+				{
+					updateGUI = game.moveLeft();
+				}
+
+				ik_left = true;
+			}
+
+			else ik_left = false;
+
+			//Right Arrow / D : Move Right
+			if (g_keyboard.isKeyPressed(g_keyboard.Right) || g_keyboard.isKeyPressed(g_keyboard.D))
+			{
+				if (!ik_right)
+				{
+					updateGUI = game.moveRight();
+				}
+
+				ik_right = true;
+			}
+
+			else ik_right = false;
+
+			//Up Arrow / W : Move Up
+			if (g_keyboard.isKeyPressed(g_keyboard.Up) || g_keyboard.isKeyPressed(g_keyboard.W))
+			{
+				if (!ik_up)
+				{
+					updateGUI = game.moveUp();
+				}
+
+				ik_up = true;
+			}
+
+			else ik_up = false;
+
+			//Down Arrow / S : Move Left
+			if (g_keyboard.isKeyPressed(g_keyboard.Down) || g_keyboard.isKeyPressed(g_keyboard.S))
+			{
+				if (!ik_down)
+				{
+					updateGUI = game.moveDown();
+				}
+
+				ik_down = true;
+			}
+
+			else ik_down = false;
+
+			//Space : Lock Parameter / Pickup
+			if (g_keyboard.isKeyPressed(g_keyboard.Space))
+			{
+				if (!ik_action)
+				{
+					updateGUI = game.actionButton();
+				}
+
+				ik_action = true;
+			}
+
+			else ik_action = false;
+		}
+#pragma endregion
+
+#pragma region Input
+		//Update all keys
+		for (InputMap::iterator mStart = buttons.begin(), mIter = mStart, mEnd = buttons.end(); mIter != mEnd; ++mIter)
+		{
+ 			mIter->second.update();
+		}
+
+		if (*buttons[LEFT])		{ updateGUI = game.moveLeft(); }
+		if (*buttons[RIGHT])	{ updateGUI = game.moveRight(); }
+		if (*buttons[UP])		{ updateGUI = game.moveUp(); }
+		if (*buttons[DOWN])		{ updateGUI = game.moveDown(); }
+		if (*buttons[ACTION])	{ updateGUI = game.actionButton(); }
+
+#pragma endregion
 
 		// Draw loop
-		window.clear();
-
-		gui.drawGame(window, game);
-
-		window.display();
+		if (updateGUI)
+		{
+			window.clear();
+			gui.drawGame(window, game);
+			window.display();
+			updateGUI = false;
+		}
 
 	}
 
