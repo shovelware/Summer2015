@@ -29,6 +29,10 @@ private:
 	enum m_gamestate_t { PIN, DISC, PLAYING, SOLVED };
 	m_gamestate_t m_gamestate;
 
+	//Input control
+	enum m_input_t { ACTION, INDEX };
+	m_input_t m_lastInput;
+
 	//Game Setup functions
 	void lockParameter();
 	bool setNumPins(unsigned int numPins);
@@ -51,6 +55,7 @@ public:
 	unsigned int getGameState() const;
 	unsigned int getPinSelected() const;
 	unsigned int getDiscHeld() const;
+	int getLastInput() const;
 
 	//Game Functions
 	bool reset();
@@ -62,14 +67,14 @@ public:
 	bool moveUp();
 	bool moveDown();
 
-	bool pickupDisc();
-	bool putdownDisc();
+	bool pickupDisc(unsigned int pin);
+	bool putdownDisc(unsigned int pin);
+	bool returnDisc();
 	bool handleDisc();
+	bool handleDisc(unsigned int pin);
 	bool moveDisc(unsigned int from, unsigned int dest);
 
 	bool actionButton();
-
-
 };
 
 #endif

@@ -89,7 +89,8 @@ public:
 	bool m_debug;
 
 	//Accessors
-	void setScale(unsigned int scale);
+	bool setScale(unsigned int scale);
+	unsigned int getScale() const;
 	unsigned int getWidth() const;
 	unsigned int getHeight() const;
 	void setBase(bool base);

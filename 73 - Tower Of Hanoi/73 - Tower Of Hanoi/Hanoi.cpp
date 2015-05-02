@@ -41,6 +41,8 @@ char* Hanoi::getGameStateAsString() const
 unsigned int Hanoi::getPinSelected() const { return m_pinSelected; }
 
 unsigned int Hanoi::getDiscHeld() const { return m_discHeld; }
+
+int Hanoi::getLastInput() const { return m_lastInput; }
 #pragma endregion
 
 #pragma region Game & Setup Functions
@@ -120,6 +122,7 @@ unsigned int Hanoi::minimumMoves()
 //Movement method, returns GUI update necessity
 bool Hanoi::moveLeft()
 {
+
 	if (m_gamestate == PIN)
 	{
 		return setNumPins(m_pinNum - 1);
@@ -127,6 +130,13 @@ bool Hanoi::moveLeft()
 	
 	else if (m_gamestate == PLAYING)
 	{
+		//Check last input
+		if (m_lastInput != ACTION)
+		{
+			m_lastInput = ACTION;
+			return true;
+		}
+
 		return (m_pinSelected != 0 ? m_pinSelected-- : m_pinSelected);
 	}
 
@@ -136,6 +146,7 @@ bool Hanoi::moveLeft()
 //Movement method, returns GUI update necessity
 bool Hanoi::moveRight()
 {
+
 	if (m_gamestate == PIN)
 	{
 		return setNumPins(m_pinNum + 1);
@@ -143,6 +154,13 @@ bool Hanoi::moveRight()
 
 	else if (m_gamestate == PLAYING)
 	{
+		//Check last input
+		if (m_lastInput != ACTION)
+		{
+			m_lastInput = ACTION;
+			return true;
+		}
+
 		return (m_pinSelected + 1 < m_pinNum ? ++m_pinSelected : m_pinSelected);
 	}
 
@@ -159,7 +177,14 @@ bool Hanoi::moveUp()
 
 	else if (m_gamestate == PLAYING)
 	{
-		return pickupDisc();
+		//Check last input
+		if (m_lastInput != ACTION)
+		{
+			m_lastInput = ACTION;
+			return true;
+		}
+
+		return pickupDisc(m_pinSelected);
 	}
 
 	return false;
@@ -175,24 +200,34 @@ bool Hanoi::moveDown()
 
 	else if (m_gamestate == PLAYING)
 	{
-		return putdownDisc();
+		//Check last input
+		if (m_lastInput != ACTION)
+		{
+			m_lastInput = ACTION;
+			return true;
+		}
+
+		return putdownDisc(m_pinSelected);
 	}
 
 	return false;
 }
 
-//Picks up a disc, returns GUI update necessity
-bool Hanoi::pickupDisc()
+//Picks up a disc from pin, returns GUI update necessity / success
+bool Hanoi::pickupDisc(unsigned int pin)
 {
-	//if our hand is empty
-	if (m_discHeld >= m_pinNum)
+	if (m_gamestate == PLAYING)
 	{
-		//if there's a disc there
-		if (!m_pins[m_pinSelected].empty())
+		//valid index and our hand is empty
+		if (pin < m_pinNum && m_discHeld >= m_pinNum)
 		{
-			//pick it up
-			m_discHeld = m_pinSelected;
-			return true;
+			//if there's a disc there
+			if (!m_pins[pin].empty())
+			{
+				//pick it up
+				m_discHeld = pin;
+				return true;
+			}
 		}
 	}
 
@@ -200,27 +235,41 @@ bool Hanoi::pickupDisc()
 }
 
 //Puts down held disc, returns GUI update necessity
-bool Hanoi::putdownDisc()
+bool Hanoi::putdownDisc(unsigned int pin)
 {
-	//if we're holding a disc
-	if (m_discHeld != m_pinNum)
+	if (m_gamestate == PLAYING)
 	{
-		//If we got it from here, just put it down
-		if (m_discHeld == m_pinSelected)
+		//if we're holding a disc
+		if (m_discHeld != m_pinNum)
 		{
-			m_discHeld = m_pinNum;
-			return true;
-		}
+			//If we got it from here
+			if (m_discHeld == pin)
+			{
+				m_discHeld = m_pinNum;
+				return true;
+			}
 
-		//else try moving it
-		else if (moveDisc(m_discHeld, m_pinSelected))
-		{
-			m_discHeld = m_pinNum;
-			return true;
+			//else try moving it
+			else if (moveDisc(m_discHeld, pin))
+			{
+				m_discHeld = m_pinNum;
+				return true;
+			}
 		}
 	}
 
 	return false;
+
+}
+
+//Puts the disc back where you got it
+bool Hanoi::returnDisc()
+{
+	if (m_gamestate == PLAYING)
+	{
+		m_discHeld = m_pinNum;
+		return true;
+	}
 }
 
 //Used for one-button interaction with game, returns GUI update necessity
@@ -234,6 +283,12 @@ bool Hanoi::actionButton()
 
 	else if (m_gamestate == PLAYING)
 	{
+		if (m_lastInput != ACTION)
+		{
+			m_lastInput = ACTION;
+			return true;
+		}
+
 		return handleDisc();
 	}
 
@@ -245,14 +300,38 @@ bool Hanoi::actionButton()
 	return false;
 }
 
-//Pick up or put down disc, returns GUI update necessity
+//Pick up or put down disc at selection, returns GUI update necessity
 bool Hanoi::handleDisc()
 {
-	//If we have one
-	if (m_discHeld != m_pinNum)
-		return putdownDisc();
+	if (m_gamestate == PLAYING)
+	{
+		//If we have one
+		if (m_discHeld != m_pinNum)
+			return putdownDisc(m_pinSelected);
 
-	else return pickupDisc();
+		else return pickupDisc(m_pinSelected);
+	}
+
+	return false;
+}
+
+//Pick up or put down disc at pin, returns GUI update necessity
+bool Hanoi::handleDisc(unsigned int pin)
+{
+	m_lastInput = INDEX;
+
+	if (m_gamestate == PLAYING)
+	{
+		//If we have one
+		if (m_discHeld != m_pinNum)
+		{
+			//Select the last pin we try move to for affordance
+			m_pinSelected = pin;
+			return putdownDisc(pin);
+		}
+
+		else return pickupDisc(pin);
+	}
 
 	return false;
 }

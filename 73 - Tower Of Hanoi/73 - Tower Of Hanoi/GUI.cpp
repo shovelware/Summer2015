@@ -8,13 +8,18 @@ GUI::GUI() : m_scale(8), m_curClickL(false), m_prvClickL(false), m_drawBase(true
 #pragma endregion
 
 #pragma region Accessors
-void GUI::setScale(unsigned int scale) 
+bool GUI::setScale(unsigned int scale) 
 { 
-	if (m_scale = scale > 0 ? scale : m_scale)
+	if (scale > 0)
 	{
+		m_scale = scale;
 		m_updateBounds = true;
+		return true;
 	}
+
+	else return false;
 }
+unsigned int GUI::getScale() const { return m_scale; }
 unsigned int GUI::getWidth() const { return m_width; }
 unsigned int GUI::getHeight() const { return m_height; }
 void GUI::setBase(bool base) { m_drawBase = base; }
@@ -171,6 +176,10 @@ void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
 		pinSelected = g.getPinSelected(),
 		discHeld = g.getDiscHeld();
 
+	//If we last used digits, hide selection boxes
+	if (g.getLastInput() == 1)
+		pinSelected = pinNum;
+
 	//Temp rects for storing dimensions
 	UIntRect rectBase(calcBase(winH, pinNum, pinHeight)), rectPin;
 	unsigned int offset = (winW / 2) - (rectBase.w / 2) - m_scale * 2;
@@ -297,7 +306,7 @@ void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
 	//Held Disc draw
 	if (m_drawDisc && discHeld < pinNum)
 	{
-		UIntRect pinRect = calcPin(winH, pinNum, pinHeight, pinSelected);
+		UIntRect pinRect = calcPin(winH, pinNum, pinHeight, pinSelected < pinNum ? pinSelected : discHeld);
 		Disc drawDisc = g.getPins()[discHeld].getStack().top();
 
 		w.draw(updateRect(
