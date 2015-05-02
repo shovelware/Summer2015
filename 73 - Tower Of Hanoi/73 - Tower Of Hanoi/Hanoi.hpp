@@ -56,15 +56,16 @@ public:
 	bool reset();
 	void updateParameters();
 	unsigned int minimumMoves();
-	bool moveDisc(unsigned int from, unsigned int dest);
-	bool move(direction_t dir);
 
 	bool moveLeft();
 	bool moveRight();
 	bool moveUp();
 	bool moveDown();
 
-	bool handleDisc(unsigned int pin);
+	bool pickupDisc();
+	bool putdownDisc();
+	bool handleDisc();
+	bool moveDisc(unsigned int from, unsigned int dest);
 
 	bool actionButton();
 

@@ -34,24 +34,4 @@ public:
 	void update();
 };
 
-/*
-static bool ik_left
-
-//Left Arrow / A : Move Left
-if (g_keyboard.isKeyPressed(g_keyboard.Left) || g_keyboard.isKeyPressed(g_keyboard.A))
-{
-if (!ik_left)
-{
-updateGUI = game.moveLeft();
-}
-
-ik_left = true;
-}
-
-else ik_left = false;
-
-
-
-*/
-
 #endif

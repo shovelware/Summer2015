@@ -10,15 +10,15 @@ public:
 	Disc(unsigned int const& size);
 
 	//Accessors
-	int size() const;
+	unsigned int size() const;
 
 	//Operators
-	bool operator<(const Disc& other) const;
-	bool operator>(const Disc& other) const;
-	bool operator<=(const Disc& other) const;
-	bool operator>=(const Disc& other) const;
-	bool operator==(const Disc& other) const;
-	bool operator!=(const Disc& other) const;
+	bool operator<(const Disc& that) const;
+	bool operator>(const Disc& that) const;
+	bool operator<=(const Disc& that) const;
+	bool operator>=(const Disc& that) const;
+	bool operator==(const Disc& that) const;
+	bool operator!=(const Disc& that) const;
 };
 
 #endif

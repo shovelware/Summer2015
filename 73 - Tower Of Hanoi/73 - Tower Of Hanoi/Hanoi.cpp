@@ -49,8 +49,9 @@ bool Hanoi::reset()
 {
 	m_gamestate = PIN;
 	m_moves = 0;
-	m_pinSelected = 0;
+	m_pinSelected = m_pinNum;
 	m_discHeld = m_pinNum;
+	m_pins.clear();
 	updateParameters();
 	return true;
 }
@@ -116,55 +117,6 @@ unsigned int Hanoi::minimumMoves()
 	return pow(2, m_discNum) - 1;
 }
 
-//attempts a move between two pin indices, returns success
-bool Hanoi::moveDisc(unsigned int from, unsigned int dest)
-{
-	bool moved = false;
-
-	//only if we're playing
-	if (m_gamestate == PLAYING)
-	{
-		//if from and dest are different and valid indexes
-		if (from != dest && from < m_pinNum && dest < m_pinNum)
-		{
-			//if from isn't empty and dest isn't full
-			if (m_pins[from].empty() == false && m_pins[dest].full() == false)
-			{
-				//if the move is valid
-				if (m_pins[from].top() < m_pins[dest].top());
-				{
-					//perform the move and update if we need to
-					if (moved = m_pins[dest].push(m_pins[from].pop()))
-					{
-						checkGameState();
-						m_moves++;
-					}
-				}
-			}
-		}
-	}
-	
-	return moved;
-}
-
-//Parent movement method, returns GUI update necessity
-bool Hanoi::move(direction_t dir)
-{
-	switch (dir)
-	{
-	case LEFT:
-		return moveLeft();
-	case UP:
-		return moveUp();
-	case RIGHT:
-		return moveRight();
-	case DOWN:
-		return moveDown();
-	default:
-		return false;
-	}
-}
-
 //Movement method, returns GUI update necessity
 bool Hanoi::moveLeft()
 {
@@ -207,7 +159,7 @@ bool Hanoi::moveUp()
 
 	else if (m_gamestate == PLAYING)
 	{
-		return handleDisc(m_pinSelected);
+		return pickupDisc();
 	}
 
 	return false;
@@ -223,23 +175,41 @@ bool Hanoi::moveDown()
 
 	else if (m_gamestate == PLAYING)
 	{
-		return handleDisc(m_pinSelected);
+		return putdownDisc();
 	}
 
 	return false;
 }
 
-bool Hanoi::handleDisc(unsigned int pin)
+//Picks up a disc, returns GUI update necessity
+bool Hanoi::pickupDisc()
 {
-	//if we're holding a disc, attempt a move to our selected pin
-	//held disc is actually the pin it came from
-	//pinNum used as a flag for empty hand
+	//if our hand is empty
+	if (m_discHeld >= m_pinNum)
+	{
+		//if there's a disc there
+		if (!m_pins[m_pinSelected].empty())
+		{
+			//pick it up
+			m_discHeld = m_pinSelected;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//Puts down held disc, returns GUI update necessity
+bool Hanoi::putdownDisc()
+{
+	//if we're holding a disc
 	if (m_discHeld != m_pinNum)
 	{
 		//If we got it from here, just put it down
 		if (m_discHeld == m_pinSelected)
 		{
 			m_discHeld = m_pinNum;
+			return true;
 		}
 
 		//else try moving it
@@ -248,15 +218,6 @@ bool Hanoi::handleDisc(unsigned int pin)
 			m_discHeld = m_pinNum;
 			return true;
 		}
-	}
-
-	//otherwise pickup a disc if it's there 
-	//if an invalid index is used, it doesn't matter, 
-	//as more than pinNum is used as empty flag
-	else if (!m_pins[m_pinSelected].empty())
-	{
-		m_discHeld = m_pinSelected;
-		return true;
 	}
 
 	return false;
@@ -273,7 +234,7 @@ bool Hanoi::actionButton()
 
 	else if (m_gamestate == PLAYING)
 	{
-		return handleDisc(m_pinSelected);
+		return handleDisc();
 	}
 
 	else if (m_gamestate == SOLVED)
@@ -282,6 +243,56 @@ bool Hanoi::actionButton()
 	}
 
 	return false;
+}
+
+//Pick up or put down disc, returns GUI update necessity
+bool Hanoi::handleDisc()
+{
+	//If we have one
+	if (m_discHeld != m_pinNum)
+		return putdownDisc();
+
+	else return pickupDisc();
+
+	return false;
+}
+
+//attempts a move between two pin indices, returns success
+bool Hanoi::moveDisc(unsigned int from, unsigned int dest)
+{
+	bool moved = false;
+
+	//only if we're playing
+	if (m_gamestate == PLAYING)
+	{
+		//if from and dest are different and valid indexes
+		if (from != dest && from < m_pinNum && dest < m_pinNum)
+		{
+			//take reference to pins
+			Pin& frm = m_pins[from];
+			Pin& dst = m_pins[dest];
+
+			//if from isn't empty and dest isn't full
+			if (frm.empty() == false && dst.full() == false)
+			{
+				Disc frmd = frm.top();
+				Disc dstd = dst.top();
+
+				//if the move is valid
+				if (frmd < dstd)
+				{
+					//perform the move and update if we need to
+					if (moved = dst.push(frm.pop()))
+					{
+						checkGameState();
+						m_moves++;
+					}
+				}
+			}
+		}
+	}
+	
+	return moved;
 }
 
 //PRIVATE
@@ -310,7 +321,7 @@ bool Hanoi::setNumPins(unsigned int numPins)
 	if (m_gamestate == PIN)
 	{
 		//valid number
-		if (numPins > m_minPins)
+		if (numPins >= m_minPins)
 		{
 			//need to update start pin
 			if (m_startPin >= m_pinNum)
@@ -319,15 +330,12 @@ bool Hanoi::setNumPins(unsigned int numPins)
 			}
 
 			m_pinNum = numPins;
-
+			updateParameters();
+			return true;
 		}
 		
-		else m_pinNum = m_minPins;
-
-		updateParameters();
-
-		//pins are always updated
-		return true;
+		//exit on invalid
+		else return false;
 	}
 }
 
@@ -335,12 +343,16 @@ bool Hanoi::setNumDiscs(unsigned int numDiscs)
 {
 	//disc phase only
 	if (m_gamestate == DISC)
-	{
-		m_discNum = numDiscs > m_minDiscs ? numDiscs : m_minDiscs;
-		updateParameters();
+	{		//valid number
+		if (numDiscs >= m_minPins)
+		{
+			m_discNum = numDiscs;
+			updateParameters();
+			return true;
+		}
 
-		//discs are always updated
-		return true;
+		//exit on invalid
+		else return false;
 	}
 }
 

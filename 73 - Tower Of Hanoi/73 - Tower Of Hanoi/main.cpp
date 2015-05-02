@@ -74,6 +74,12 @@ int main()
 	gui.m_debug = true;
 
 	bool updateGUI = true;
+	game.actionButton();
+	game.moveUp();
+	game.moveUp();
+	game.moveUp();
+	game.actionButton();
+
 	int minMoves = game.minimumMoves();
 	bool solvedState = game.getSolved();
 
@@ -99,80 +105,6 @@ int main()
 
 		}
 		
-		#pragma region OLD Input
-
-		if (false)
-		{
-			static bool
-				ik_left, ik_right, ik_up, ik_down, ik_action;
-
-			//Left Arrow / A : Move Left
-			if (g_keyboard.isKeyPressed(g_keyboard.Left) || g_keyboard.isKeyPressed(g_keyboard.A))
-			{
-				if (!ik_left)
-				{
-					updateGUI = game.moveLeft();
-				}
-
-				ik_left = true;
-			}
-
-			else ik_left = false;
-
-			//Right Arrow / D : Move Right
-			if (g_keyboard.isKeyPressed(g_keyboard.Right) || g_keyboard.isKeyPressed(g_keyboard.D))
-			{
-				if (!ik_right)
-				{
-					updateGUI = game.moveRight();
-				}
-
-				ik_right = true;
-			}
-
-			else ik_right = false;
-
-			//Up Arrow / W : Move Up
-			if (g_keyboard.isKeyPressed(g_keyboard.Up) || g_keyboard.isKeyPressed(g_keyboard.W))
-			{
-				if (!ik_up)
-				{
-					updateGUI = game.moveUp();
-				}
-
-				ik_up = true;
-			}
-
-			else ik_up = false;
-
-			//Down Arrow / S : Move Left
-			if (g_keyboard.isKeyPressed(g_keyboard.Down) || g_keyboard.isKeyPressed(g_keyboard.S))
-			{
-				if (!ik_down)
-				{
-					updateGUI = game.moveDown();
-				}
-
-				ik_down = true;
-			}
-
-			else ik_down = false;
-
-			//Space : Lock Parameter / Pickup
-			if (g_keyboard.isKeyPressed(g_keyboard.Space))
-			{
-				if (!ik_action)
-				{
-					updateGUI = game.actionButton();
-				}
-
-				ik_action = true;
-			}
-
-			else ik_action = false;
-		}
-#pragma endregion
-
 #pragma region Input
 		//Update all keys
 		for (InputMap::iterator mStart = buttons.begin(), mIter = mStart, mEnd = buttons.end(); mIter != mEnd; ++mIter)
@@ -180,12 +112,12 @@ int main()
  			mIter->second.update();
 		}
 
+		//Check all keys, take actions
 		if (*buttons[LEFT])		{ updateGUI = game.moveLeft(); }
 		if (*buttons[RIGHT])	{ updateGUI = game.moveRight(); }
 		if (*buttons[UP])		{ updateGUI = game.moveUp(); }
 		if (*buttons[DOWN])		{ updateGUI = game.moveDown(); }
 		if (*buttons[ACTION])	{ updateGUI = game.actionButton(); }
-
 #pragma endregion
 
 		// Draw loop
@@ -196,7 +128,6 @@ int main()
 			window.display();
 			updateGUI = false;
 		}
-
 	}
 
 	return EXIT_SUCCESS;

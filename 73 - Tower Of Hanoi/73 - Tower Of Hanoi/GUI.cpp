@@ -53,11 +53,16 @@ void GUI::calcOutline()
 UIntRect GUI::calcBase(unsigned int winHeight, unsigned int pinNum, unsigned int pinHeight)
 {
 	return UIntRect(
-		m_scale,
+		0,
 		winHeight - (2 * m_scale),
 		(((2 * pinNum) + 1) * m_scale) + (((pinNum * 2) * pinHeight) * m_scale),
 		m_scale
 		);
+
+	//1u x border
+	//1u y border
+	//1u gap between pins, for pins. discNum units * 2 for each pin's discs
+	//1u height
 }
 
 //returns a calculated rectangle for the pin at passed index
@@ -65,9 +70,9 @@ UIntRect GUI::calcPin(unsigned int winHeight, unsigned int pinNum, unsigned int 
 {
 	return UIntRect(
 		(2 * m_scale) + (pinHeight * m_scale) + (pinIndex * ((2 * m_scale) + (2 * pinHeight * m_scale))),
-		winHeight - (2 * m_scale) - pinHeight * m_scale /**/ - m_scale,
+		winHeight - (2 * m_scale) - pinHeight * m_scale,
 		m_scale,
-		pinHeight * m_scale /**/ + m_scale
+		pinHeight * m_scale
 		);
 }
 
@@ -141,7 +146,7 @@ RectangleShape& GUI::updateRect(unsigned int x, unsigned int y, unsigned int w, 
 
 		else if (rectType == GHOST)
 		{
-			m_drawRect.setFillColor(Color(c.r, c.g, c.b, c.a / 2));
+			m_drawRect.setFillColor(Color(c.r, c.g, c.b, 96));
 		}
 	}//end special draws
 
@@ -158,25 +163,30 @@ void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
 	//m_curClickL = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
 
 	//grab vars from game
-	unsigned int pinHeight = g.getPinHeight(), pinNum = g.getPinNum(), winW = w.getSize().x, winH = w.getSize().y, pinSelected = g.getPinSelected(), discHeld = g.getDiscHeld();
-	bool discInHand = (g.getDiscHeld() < pinNum);
+	unsigned int 
+		pinHeight = g.getPinHeight(),
+		pinNum = g.getPinNum(),
+		winW = w.getSize().x,
+		winH = w.getSize().y,
+		pinSelected = g.getPinSelected(),
+		discHeld = g.getDiscHeld();
 
 	//Temp rects for storing dimensions
 	UIntRect rectBase(calcBase(winH, pinNum, pinHeight)), rectPin;
-	unsigned int offset = winW / 2 - rectBase.w / 2;
+	unsigned int offset = (winW / 2) - (rectBase.w / 2) - m_scale * 2;
 
 	//Update game bounds if we've changed scale
 	if (m_updateBounds)
 	{
 		//base width + border
 		m_width = (((2 * pinNum) + 1) * m_scale) + (((pinNum * 2) * pinHeight) * m_scale) + (2 * m_scale);
-		//pin height + base height(1) + border(2) + selected disc(2)
-		m_height = (pinHeight * m_scale) + m_scale * 5;
+		//pin height + extension(1) + base height(1) + border(2) + selected disc & border(2)
+		m_height = (pinHeight * m_scale) + m_scale * 6;
 		calcOutline();
 		m_updateBounds = false;
 	}
 
-	//Base (Plus filthy maths for it's xywh)
+	//Base
 	if (m_drawBase)
 	{
 		w.draw(updateRect(
@@ -187,10 +197,6 @@ void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
 			m_cbase
 			));
 
-		//1u x border
-		//1u y border
-		//1u gap between pins, for pins. discNum units * 2 for each pin's discs
-		//1u height
 		//base colour
 		//rect type
 		//draw condition
@@ -209,9 +215,9 @@ void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
 			//draw each pin, with selected pin highlighted
 			w.draw(updateRect(
 				offset + rectPin.x,
-				rectPin.y,
+				rectPin.y - m_scale,
 				rectPin.w,
-				rectPin.h,
+				rectPin.h + m_scale,
 				m_cpin,
 				(p == pinSelected ? SELECT : DEFAULT )
 				));
@@ -233,19 +239,22 @@ void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
 			{
 				stack<Disc> discs = pins[p].getStack();
 				unsigned int discIndex = discs.size();
+				unsigned int discNum = discIndex;
 
 				rectType_t type = DEFAULT;
 
+				//disc.size = top disc
+
 				//Decide draw type for top
-				if (pinSelected == p)
+				if (discHeld == p)
 				{
-					type = HIGHLIGHT;
+						type = GHOST;
 				}
 				
-				else if (discHeld == p)
+				else if (pinSelected == p)
 				{
-					type = GHOST;
-				}
+					type = HIGHLIGHT;
+				} 
 					
 				//pin disc draw loop
 				while (!discs.empty())
@@ -253,8 +262,6 @@ void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
 					Disc drawDisc = discs.top();
 					discs.pop();
 					discIndex--;
-
-
 
 					//Draw each disc, with selected pin's top disc highlighted
 					w.draw(updateRect(
@@ -274,33 +281,32 @@ void GUI::drawGame(sf::RenderWindow& const w, Hanoi const& g)
 					//rect type
 					//draw condition
 
-					//Top disc is first drawn, now we switch to hover for second if we're on this pin
-					if (discHeld == p && pinSelected == p)
+					//If we're holding a disc from this pin, and on this pin, draw the second as highlight
+					if (discIndex == discNum - 1 && discHeld == p && pinSelected == p)
 					{
 						type = HIGHLIGHT;
 					}
 
 					//Otherwise we stick with normal
 					else type = DEFAULT;
-
 				}//end pin disc draw loop
 			}//end pin disc draw toggle
 		}//end pin empty check
 	}//end pin draw loop
 
 	//Held Disc draw
-	if (m_drawDisc && discInHand)
+	if (m_drawDisc && discHeld < pinNum)
 	{
 		UIntRect pinRect = calcPin(winH, pinNum, pinHeight, pinSelected);
 		Disc drawDisc = g.getPins()[discHeld].getStack().top();
 
 		w.draw(updateRect(
 			offset + pinRect.x - (drawDisc.size() * m_scale),
-			(pinRect.y - m_scale * 2),
+			(pinRect.y - m_scale * 3),
 			2 * (m_scale * drawDisc.size()) + m_scale,
 			m_scale,
 			m_cdisc,
-			SELECT
+			DEFAULT
 			));
 
 		//pin position - half disc
