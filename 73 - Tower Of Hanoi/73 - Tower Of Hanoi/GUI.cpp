@@ -3,6 +3,7 @@
 #pragma region Ctor
 GUI::GUI() : m_scale(8), m_curClickL(false), m_prvClickL(false), m_drawBase(true), m_drawPins(true), m_drawDisc(true), m_width(0), m_height(0), m_updateBounds(true), m_mouseControl(false)
 {
+	//generate game colours
 	colpls();
 }
 #pragma endregion
@@ -13,8 +14,7 @@ bool GUI::setScale(unsigned int scale)
 	if (scale > 0)
 	{
 		m_scale = scale;
-		m_updateBounds = true;
-		return true;
+		return m_updateBounds = true;
 	}
 
 	else return false;
@@ -49,6 +49,7 @@ bool GUI::mouseOverRect(RectangleShape rect) const
 	return ((rx < mx && mx <= rx + rw) && (ry < my && my <= ry + rh));
 }
 
+//uses either 1/8 of the size or 1 for <8 
 void GUI::calcOutline()
 {
 	m_outline = (m_scale / 8 + (m_scale > 8 ? m_scale % 2 : 1)); 
@@ -58,15 +59,15 @@ void GUI::calcOutline()
 UIntRect GUI::calcBase(unsigned int winHeight, unsigned int pinNum, unsigned int pinHeight)
 {
 	return UIntRect(
-		0,
+		m_scale,
 		winHeight - (2 * m_scale),
-		(((2 * pinNum) + 1) * m_scale) + (((pinNum * 2) * pinHeight) * m_scale),
+		(((2 * pinNum) + (pinNum % 2 ? 2 : 1)) * m_scale) + (((pinNum * 2) * pinHeight) * m_scale),
 		m_scale
 		);
 
 	//1u x border
-	//1u y border
-	//1u gap between pins, for pins. discNum units * 2 for each pin's discs
+	//1u y border + 1u height from bottom
+	//(((1u pin + [odd: 1u, even: 2u] rightspace * numPins) + 1u leftspace for first) + ((2 disc sides of each pin) * highest pin [is also widest disc!]) * global scale)
 	//1u height
 }
 
@@ -74,13 +75,13 @@ UIntRect GUI::calcBase(unsigned int winHeight, unsigned int pinNum, unsigned int
 UIntRect GUI::calcPin(unsigned int winHeight, unsigned int pinNum, unsigned int pinHeight, unsigned int pinIndex)
 {
 	return UIntRect(
-		m_scale + (pinHeight * m_scale) + (pinIndex * ((2 * m_scale) + (2 * pinHeight * m_scale))),
+		(pinNum % 2 ? 2 : 1) * m_scale + (pinHeight * m_scale) + (pinIndex * ((2 * m_scale) + (2 * pinHeight * m_scale))),
 		winHeight - (2 * m_scale) - pinHeight * m_scale,
 		m_scale,
 		pinHeight * m_scale
 		);
 
-	//(1u x border) + (width of discs on left) + (index * (width of discs on right, gap, width of discs on left))
+	//[odd: 1u, even: 2u] x border + (largest disc on left) + (index * (1u pin, 1u gap) + (largest disc on right and left))
 	//base y - pin height
 	//1u width
 	//pinHeight height
@@ -165,6 +166,19 @@ RectangleShape& GUI::updateRect(unsigned int x, unsigned int y, unsigned int w, 
 	return m_drawRect;
 }
 
+void GUI::updateBounds(unsigned int pinNum, unsigned int pinHeight)
+{
+	//base width + border
+	m_width = (((2 * pinNum) + 1) * m_scale) + (((pinNum * 2) * pinHeight) * m_scale) + (2 * m_scale);
+
+	//pin height + extension(1) + base height(1) + border(2) + selected disc & border(2)
+	m_height = (pinHeight * m_scale) + m_scale * 6;
+
+	//recalculate outline
+	calcOutline();
+	m_updateBounds = false;
+}
+
 //PUBLIC
 
 void GUI::drawGame(sf::RenderWindow& w, Hanoi const& g)
@@ -181,26 +195,43 @@ void GUI::drawGame(sf::RenderWindow& w, Hanoi const& g)
 		winW = w.getSize().x,
 		winH = w.getSize().y,
 		pinSelected = g.getPinSelected(),
-		discHeld = g.getDiscHeld();
+		discHeld = g.getDiscHeld(),
+		gamestate = g.getGameState();
+
+	//check if the game has updated anything
+	if (m_pinNum != pinNum)
+	{
+		m_updateBounds = true;
+		m_pinNum = pinNum;
+	}
+
+	if (m_pinHeight != pinHeight)
+	{
+		m_updateBounds = true;
+		m_pinHeight = pinHeight;
+	}
 
 	//If we last used digits, hide selection boxes
 	if (g.getLastInput() == 1)
 		pinSelected = pinNum;
 
-	//Temp rects for storing dimensions
-	UIntRect rectBase(calcBase(winH, pinNum, pinHeight)), rectPin;
-	unsigned int offset = (winW / 2) - (rectBase.w / 2) - m_scale * 2;
-
 	//Update game bounds if we've changed scale
 	if (m_updateBounds)
-	{
-		//base width + border
-		m_width = (((2 * pinNum) + 1) * m_scale) + (((pinNum * 2) * pinHeight) * m_scale) + (2 * m_scale);
-		//pin height + extension(1) + base height(1) + border(2) + selected disc & border(2)
-		m_height = (pinHeight * m_scale) + m_scale * 6;
-		calcOutline();
-		m_updateBounds = false;
+	{	
+		updateBounds(pinNum, pinHeight);
+
+		while (m_width > winW && m_scale > 1)
+		{
+			setScale(m_scale - 1);
+			updateBounds(pinNum, pinHeight);
+
+			cout << "Rescaled to: " << m_scale << endl;
+		}
 	}
+
+	//Temp rects for storing dimensions
+	UIntRect rectBase(calcBase(winH, pinNum, pinHeight)), rectPin;
+ 	unsigned int offset = (winW / 2) - (rectBase.w / 2);
 
 	//Base
 	if (m_drawBase)
@@ -333,10 +364,32 @@ void GUI::drawGame(sf::RenderWindow& w, Hanoi const& g)
 			<< " | Selected: "
 			<< pinSelected
 			<< " | Disc: "
-			<< discHeld
+			<< (discHeld)
+			<< " ("
+			<< ((discHeld != pinNum) ? g.getPins()[discHeld].top().size() : 0)
+			<< ")"
 			<< endl;
 
-		if (g.getGameState() == 3)
+		//pull state from game for debug
+
+		if (gamestate == 2 && m_gameState < 2)
+		{
+
+			cout
+				<< "--- GAME STARTED ---"
+				<< endl
+				<< "pinNum = "
+				<< m_pinNum
+				<< " | discNum = "
+				<< m_pinHeight
+				<< " | startPin =  "
+				<< g.getEndPin()
+				<< " | endPin =  "
+				<< g.getStartPin()
+				<< endl;
+		}
+
+		else if (gamestate == 3)
 		{
 			cout
 				<< ""
@@ -345,6 +398,8 @@ void GUI::drawGame(sf::RenderWindow& w, Hanoi const& g)
 				<< g.getMinimumMoves()
 				<< endl;
 		}
+
+		m_gameState = gamestate;
 	}
 }
 

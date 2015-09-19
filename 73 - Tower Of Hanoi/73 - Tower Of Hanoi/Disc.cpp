@@ -16,4 +16,3 @@ bool Disc::operator<=(const Disc& that) const { return this->m_size <= that.m_si
 bool Disc::operator>=(const Disc& that) const { return this->m_size >= that.m_size; }
 bool Disc::operator!=(const Disc& that) const { return this->m_size != that.m_size; }
 #pragma endregion
-

@@ -37,6 +37,7 @@ const int g_screenH = 800;
 
 const sf::Mouse g_mouse;
 const sf::Keyboard g_keyboard;
+const sf::Color g_clearCol(64, 64, 64, 255);
 
 Hanoi game;
 GUI gui;
@@ -80,12 +81,11 @@ void registerInputs()
 //////////////////////////////////////////////////////////// 
 int main()
 {
-
 	gui.setScale(16);
 	gui.m_debug = true;
 
-	bool updateGUI = true;
 
+	bool updateGUI = true;
 
 	registerInputs();
 
@@ -106,6 +106,7 @@ int main()
 			// Escape key : exit 
 			if ((Event.type == sf::Event::KeyPressed) && ((Event.key.code == g_keyboard.Escape) || (Event.key.code == g_keyboard.BackSpace)/*Alt+F4 support here*/))
 				window.close();
+
 #pragma region Input
 		//Update all keys
 		for (InputMap::iterator mStart = buttons.begin(), mIter = mStart, mEnd = buttons.end(); mIter != mEnd; ++mIter)
@@ -113,7 +114,7 @@ int main()
  			mIter->second.update();
 		}
 
-		//Check all keys, take actions
+		//Check all keys, take actions, figure out if we need to update the GUI
 		if (*buttons[LEFT])			{ updateGUI = game.moveLeft(); }
 		if (*buttons[RIGHT])		{ updateGUI = game.moveRight(); }
 		if (*buttons[UP])			{ updateGUI = game.moveUp(); }
@@ -135,13 +136,11 @@ int main()
 		if (*buttons[NUM9])			{ updateGUI = game.handleDisc(8); }
 #pragma endregion
 		}
-		
-
 
 		// Draw loop
 		if (updateGUI)
 		{
-			window.clear();
+			window.clear(g_clearCol);
 			gui.drawGame(window, game);
 			window.display();
 			updateGUI = false;

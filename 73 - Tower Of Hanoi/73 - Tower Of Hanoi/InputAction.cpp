@@ -38,7 +38,7 @@ bool InputAction::removeKey(Key key)
 #pragma endregion
 
 #pragma region Accessors
-bool InputAction::getAction() const { return m_response; }
+bool InputAction::getResponse() const { return m_response; }
 
 //overload dereference operator to get easy access to response
 const bool InputAction::operator*() const { return m_response; }

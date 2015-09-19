@@ -37,6 +37,10 @@ unsigned int Hanoi::getPinNum() const { return m_pinNum; }
 
 unsigned int Hanoi::getPinHeight() const { return m_pins[0].capacity();  }
 
+unsigned int Hanoi::getStartPin() const { return m_startPin; }
+
+unsigned int Hanoi::getEndPin() const { return m_endPin; }
+
 vector<Pin> Hanoi::getPins() const { return vector<Pin>(m_pins); }
 
 unsigned int Hanoi::getPinSelected() const { return m_pinSelected; }
@@ -397,7 +401,7 @@ bool Hanoi::setNumPins(unsigned int numPins)
 	if (m_gamestate == PIN)
 	{
 		//valid number
-		if (numPins >= m_minPins)
+		if (numPins >= m_minPins && numPins <= m_maxPins)
 		{
 			//need to update start pin
 			if (m_startPin >= m_pinNum)
@@ -421,7 +425,7 @@ bool Hanoi::setNumDiscs(unsigned int numDiscs)
 	if (m_gamestate == DISC)
 	{	
 		//valid number
-		if (numDiscs >= m_minPins)
+		if (numDiscs >= m_minDiscs && numDiscs <= m_maxDiscs)
 		{
 			m_discNum = numDiscs;
 			updateParameters();

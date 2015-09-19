@@ -17,7 +17,9 @@ using std::vector;
 class Hanoi{
 private:
 	//Game variables
-	const unsigned int m_minPins = 3, m_minDiscs = 2;
+	const unsigned int 
+		m_minPins = 3, m_minDiscs = 2,
+		m_maxPins = 16, m_maxDiscs = 16;
 	unsigned int 
 		m_pinNum, m_discNum, 
 		m_startPin, m_endPin,
@@ -52,6 +54,8 @@ public:
 	unsigned int getMoves() const;
 	unsigned int getPinNum() const;
 	unsigned int getPinHeight() const;
+	unsigned int getStartPin() const;
+	unsigned int getEndPin() const;
 	vector<Pin> getPins() const;
 	unsigned int getPinSelected() const;
 	unsigned int getDiscHeld() const;

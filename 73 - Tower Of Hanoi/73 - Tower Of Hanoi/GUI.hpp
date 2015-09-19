@@ -14,8 +14,9 @@ using sf::RectangleShape;
 using std::cout;
 using std::endl;
 
-//rect bounds class?
+//basic rect bounds struct
 struct UIntRect{
+private:
 	unsigned int m_x, m_y, m_w, m_h;
 public:
 	unsigned int const& x = m_x, const& y = m_y, const& w = m_w, const& h = m_h;
@@ -67,6 +68,9 @@ private:
 	//Single rectangle for drawing
 	RectangleShape m_drawRect;
 
+	//Retain game information for checks
+	unsigned int m_pinNum, m_pinHeight, m_gameState;
+
 	//Drawing functions
 	//Color lighten(Color const& c);
 	//Color darken(Color const& c);
@@ -76,8 +80,7 @@ private:
 	UIntRect calcBase(unsigned int winHeight, unsigned int pinNum, unsigned int pinHeight);
 	UIntRect calcPin(unsigned int winHeight, unsigned int pinNum, unsigned int pinHeight, unsigned int pinIndex);
 	RectangleShape& updateRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, Color c, rectType_t rectType, rectDrawOn_t drawOn);
-
-
+	void updateBounds(unsigned int pinNum, unsigned int pinHeight);
 
 public:
 	GUI();

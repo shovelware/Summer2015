@@ -28,7 +28,7 @@ public:
 	bool addKey(Key key);
 	bool removeKey(Key key);
 	
-	bool getAction() const;
+	bool getResponse() const;
 	const bool operator*() const;
 
 	void update();
